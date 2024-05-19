@@ -49,3 +49,17 @@ async def update_message(evaluation_response: bool, chat_id: int, message_id: in
             connection.commit()
     except Exception as e:
         print(f'[INFO] PostgreSQL update_message {e}')
+
+async def show_questions(date: str, to_date: str, evaluation_response: bool):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """SELECT message_question_text FROM message
+                WHERE (evaluation_response IS NULL OR evaluation_response = %s) AND (formatted_date BETWEEN %s AND %s)""",
+                (evaluation_response,
+                date,
+                to_date))
+            connection.commit()
+            return cursor.fetchall()
+    except Exception as e:
+        print(f'[INFO] PostgreSQL update_message {e}')

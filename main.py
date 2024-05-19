@@ -4,7 +4,6 @@ from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 from callbacks import evaluationg_message
 from handlers import commands, responses
-from Neuron.config import config
 
 async def main():
     load_dotenv()
