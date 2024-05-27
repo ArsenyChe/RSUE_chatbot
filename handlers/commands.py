@@ -7,12 +7,16 @@ from messages import TEXT_START, TEXT_ADMIN, TEXT_PERMISSION_ERROR
 import time
 from os import getenv
 from dotenv import load_dotenv
+from neural_network.dataset_modification import JSONFileManager 
+from neural_network.neural_network_training import NeuralNetworkTraining
 
 load_dotenv()
 
 router = Router()
 
 admin_username: list[str] = [getenv('ADMIN_USERNAME')]
+
+JSON_file_manager = JSONFileManager("data.json")
 
 # фильтр, проверяющий юзера на админа
 class IsAdmin(BaseFilter):
@@ -37,29 +41,65 @@ async def cmd_show_questions(message: Message, command: CommandObject):
             time.strptime(date, "%Y-%m-%d")
             time.strptime(to_date, "%Y-%m-%d")
             questions = await database.show_questions(date, to_date, evaluation_response)
-            await message.answer('\n'.join(map(str, questions))) if questions is not None else await message.answer('Пусто')
+            await message.answer('\n'.join(map(str, questions))) if len(questions) != 0 else await message.answer('Пусто')
         except (ValueError, TypeError):
             await message.answer('Формат даты должен быть таким: %Y-%m-%d')
     else: await message.answer('Команда написана неправильно. /show_questions [ОТ ДАТЫ] [ДО ДАТЫ] [РЕАКЦИЯ НА ОТВЕТ НЕЙРОСЕТИ]')
 
+@router.message(IsAdmin(admin_username), Command("show_tags"))
+async def cmd_show_tags(message: Message):
+    await message.answer(JSON_file_manager.show_tags())
+    await message.delete()
+
 @router.message(IsAdmin(admin_username), Command("show_patterns"))
 async def cmd_show_patterns(message: Message, command: CommandObject):
-    pass
+    command_len = 2
+    if len(message.text.split()) == command_len:
+        tag = command.args
+        await message.answer(JSON_file_manager.show_patterns(tag))
+        await message.delete()
+    else: await message.answer('Команда написана неправильно. /show_patterns [ТЕГ]')
 
 @router.message(IsAdmin(admin_username), Command("nn_training"))
 async def cmd_nn_training(message: Message):
-    pass
+    nn = NeuralNetworkTraining("data.json")
+    nn.read_data()
+    X_train, Y_train = nn.preprocess_data()
+    nn.build_model()
+    nn.train_model(X_train, Y_train)
+    await message.answer("Модель обучилась")
+    await message.delete()
 
 @router.message(IsAdmin(admin_username), Command("add_intent"))
-async def cmd_add_intent(message: Message):
-    pass
+async def cmd_add_intent(message: Message, command: CommandObject):
+    command_len = 2
+    if len(message.text.split()) == command_len:
+        tag = command.args
+        await message.answer(JSON_file_manager.add_intent(tag))
+        await message.delete()
+    else: await message.answer('Команда написана неправильно. /add_intent [ТЕГ]')
+
 
 @router.message(IsAdmin(admin_username), Command("delete_intent"))
-async def cmd_delete_intentt(message: Message):
-    pass
+async def cmd_delete_intent(message: Message, command: CommandObject):
+    command_len = 2
+    if len(message.text.split()) == command_len:
+        tag = command.args
+        await message.answer(JSON_file_manager.delete_intent(tag))
+        await message.delete()
+    else: await message.answer('Команда написана неправильно. /delete_intent [ТЕГ]')
+
+@router.message(IsAdmin(admin_username), Command("edit_intent"))
+async def cmd_edit_intent(message: Message, command: CommandObject):
+    command_len = 3
+    if len(message.text.split()) == command_len:
+        tag = command.args
+        await message.answer(JSON_file_manager.edit_intent(tag))
+        await message.delete()
+    else: await message.answer('Команда написана неправильно. /edit_intent [ТЕГ] [НОВЫЙ ТЕГ]')
 
 @router.message(IsAdmin(admin_username), Command("output_dataset"))
-async def cmd_output_dataset(message: Message):
+async def cmd_output_dataset(message: Message, command: CommandObject):
     pass
 
 @router.message(IsAdmin(admin_username), Command("add_pattern"))
