@@ -49,7 +49,6 @@ async def cmd_show_questions(message: Message, command: CommandObject):
 @router.message(IsAdmin(admin_username), Command("show_tags"))
 async def cmd_show_tags(message: Message):
     await message.answer(JSON_file_manager.show_tags())
-    await message.delete()
 
 @router.message(IsAdmin(admin_username), Command("show_patterns"))
 async def cmd_show_patterns(message: Message, command: CommandObject):
@@ -57,7 +56,6 @@ async def cmd_show_patterns(message: Message, command: CommandObject):
     if len(message.text.split()) == command_len:
         tag = command.args
         await message.answer(JSON_file_manager.show_patterns(tag))
-        await message.delete()
     else: await message.answer('Команда написана неправильно. /show_patterns [ТЕГ]')
 
 @router.message(IsAdmin(admin_username), Command("nn_training"))
@@ -68,7 +66,6 @@ async def cmd_nn_training(message: Message):
     nn.build_model()
     nn.train_model(X_train, Y_train)
     await message.answer("Модель обучилась")
-    await message.delete()
 
 @router.message(IsAdmin(admin_username), Command("add_intent"))
 async def cmd_add_intent(message: Message, command: CommandObject):
@@ -76,7 +73,6 @@ async def cmd_add_intent(message: Message, command: CommandObject):
     if len(message.text.split()) == command_len:
         tag = command.args
         await message.answer(JSON_file_manager.add_intent(tag))
-        await message.delete()
     else: await message.answer('Команда написана неправильно. /add_intent [ТЕГ]')
 
 
@@ -86,7 +82,6 @@ async def cmd_delete_intent(message: Message, command: CommandObject):
     if len(message.text.split()) == command_len:
         tag = command.args
         await message.answer(JSON_file_manager.delete_intent(tag))
-        await message.delete()
     else: await message.answer('Команда написана неправильно. /delete_intent [ТЕГ]')
 
 @router.message(IsAdmin(admin_username), Command("edit_intent"))
@@ -95,7 +90,6 @@ async def cmd_edit_intent(message: Message, command: CommandObject):
     if len(message.text.split()) == command_len:
         tag = command.args
         await message.answer(JSON_file_manager.edit_intent(tag))
-        await message.delete()
     else: await message.answer('Команда написана неправильно. /edit_intent [ТЕГ] [НОВЫЙ ТЕГ]')
 
 @router.message(IsAdmin(admin_username), Command("output_dataset"))
@@ -103,12 +97,24 @@ async def cmd_output_dataset(message: Message, command: CommandObject):
     pass
 
 @router.message(IsAdmin(admin_username), Command("add_pattern"))
-async def cmd_add_pattern(message: Message):
-    pass
+async def cmd_add_pattern(message: Message, command: CommandObject):
+    tag, pattern = command.args.split(" ",1)
+    await message.answer(JSON_file_manager.add_pattern(tag, pattern))
 
 @router.message(IsAdmin(admin_username), Command("delete_pattern"))
-async def cmd_delete_pattern(message: Message):
-    pass
+async def cmd_delete_pattern(message: Message, command: CommandObject):
+    tag, pattern = command.args.split(" ",1)
+    await message.answer(JSON_file_manager.delete_pattern(tag, pattern))
+
+@router.message(IsAdmin(admin_username), Command("add_response"))
+async def cmd_add_response(message: Message, command: CommandObject):
+    tag, response = command.args.split(" ",1)
+    await message.answer(JSON_file_manager.add_response(tag, response))
+
+@router.message(IsAdmin(admin_username), Command("delete_response"))
+async def cmd_delete_response(message: Message, command: CommandObject):
+    tag, response = command.args.split(" ",1)
+    await message.answer(JSON_file_manager.delete_pattern(tag, response))
 
 @router.message(IsAdmin(admin_username), Command("add_response"))
 async def cmd_add_response(message: Message):

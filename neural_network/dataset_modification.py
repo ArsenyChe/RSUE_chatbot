@@ -42,6 +42,42 @@ class JSONFileManager:
             self.save_intents(intents)
             return f"Тег '{tag}' изменен на '{new_tag}'"
         else: return f"Тег '{tag}' отсутствует или '{new_tag}' совпадает с существующими тегами"
+
+    def add_pattern(self, tag, pattern):
+        intents = self.load_intents()
+        tag_pattern = any(pattern in intent["patterns"] for intent in intents)
+        if not tag_pattern:
+            [intent["patterns"].append(pattern) if intent.get("tag") == tag else intent for intent in intents]
+            self.save_intents(intents)
+            return f"Тег '{pattern}' добавлен"
+        else: return f"Тег '{pattern}' уже существует"
+
+    def delete_pattern(self, tag, pattern):
+        intents = self.load_intents()
+        tag_pattern = any(pattern in intent["patterns"] for intent in intents)
+        if tag_pattern:
+            [intent['patterns'].remove(pattern) for intent in intents if intent['tag'] == tag and pattern in intent['patterns']]
+            self.save_intents(intents)
+            return f"Тег '{pattern}' удален"
+        else: return f"Тег '{pattern}' отсутствует"
+
+    def add_response(self, tag, response):
+        intents = self.load_intents()
+        tag_response = any(response in intent["responses"] for intent in intents)
+        if not tag_response:
+            [intent["responses"].append(response) if intent.get("tag") == tag else intent for intent in intents]
+            self.save_intents(intents)
+            return f"Тег '{response}' добавлен"
+        else: return f"Тег '{response}' уже существует"
+
+    def delete_response(self, tag, response):
+        intents = self.load_intents()
+        tag_response = any(response in intent["responses"] for intent in intents)
+        if tag_response:
+            [intent['responses'].remove(response) for intent in intents if intent['tag'] == tag and response in intent['responses']]
+            self.save_intents(intents)
+            return f"Тег '{response}' удален"
+        else: return f"Тег '{response}' отсутствует"
     
     def display_intents(self):
         intents = self.load_intents()
