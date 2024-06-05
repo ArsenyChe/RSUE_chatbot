@@ -2,7 +2,7 @@ from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
 from messages import TEXT_FEEDBACK
 from keyboards.inline import keyboard_thanks
-from data import database
+from data import database_message
 
 router = Router()
 
@@ -14,5 +14,5 @@ async def evaluationg_message(callback: CallbackQuery, bot: Bot):
                                         message_id=callback.message.message_id, 
                                         reply_markup=keyboard_thanks)
     await callback.message.answer(TEXT_FEEDBACK)
-    await database.update_message(evaluation_response, callback.message.chat.id, callback.message.reply_to_message.message_id)
+    await database_message.update_message(evaluation_response, callback.message.chat.id, callback.message.reply_to_message.message_id)
     await callback.answer()

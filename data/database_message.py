@@ -9,9 +9,9 @@ try:
         host = getenv('HOST'),
         user = getenv('USER'),
         password = getenv('PASS'),
-        database = getenv('DB_NAME')
+        database = getenv('DB_NAME_MESSAGE')
     )
-    print(f'[INFO] PostgreSQL connect')
+    print(f'[INFO] PostgreSQL connect DB_NAME_MESSAGE')
 except Exception as e:
     print(f'[INFO] PostgreSQL {e}')
 

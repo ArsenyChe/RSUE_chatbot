@@ -18,7 +18,7 @@ class JSONFileManager:
         intents = self.load_intents()
         tag_check = any(intent["tag"] == tag for intent in intents)
         if not tag_check:
-            new_intent = {"tag": tag, "patterns": "", "responses": ""}
+            new_intent = {"tag": tag, "patterns": [], "responses": []}
             intents.append(new_intent)
             self.save_intents(intents)
             return f"Тег '{tag}' добавлен"
@@ -49,8 +49,8 @@ class JSONFileManager:
         if not tag_pattern:
             [intent["patterns"].append(pattern) if intent.get("tag") == tag else intent for intent in intents]
             self.save_intents(intents)
-            return f"Тег '{pattern}' добавлен"
-        else: return f"Тег '{pattern}' уже существует"
+            return f"'{pattern}' добавлен"
+        else: return f"'{pattern}' уже существует"
 
     def delete_pattern(self, tag, pattern):
         intents = self.load_intents()
@@ -58,8 +58,8 @@ class JSONFileManager:
         if tag_pattern:
             [intent['patterns'].remove(pattern) for intent in intents if intent['tag'] == tag and pattern in intent['patterns']]
             self.save_intents(intents)
-            return f"Тег '{pattern}' удален"
-        else: return f"Тег '{pattern}' отсутствует"
+            return f"'{pattern}' удален"
+        else: return f"'{pattern}' отсутствует"
 
     def add_response(self, tag, response):
         intents = self.load_intents()
@@ -96,8 +96,22 @@ class JSONFileManager:
     
     def show_patterns(self, tag):
         intents = self.load_intents()
-        patterns = ([intent["patterns"] for intent in intents if intent["tag"] == tag])
-        if len(patterns) == 0:
-            return f"Для тега '{tag}' отсутствуют шаблоны"
-        flat_patterns = sum(patterns, [])
-        return '\n'.join(map(str, flat_patterns))
+        tag_check = any(intent["tag"] == tag for intent in intents)
+        if tag_check:
+            patterns = ([intent["patterns"] for intent in intents if intent["tag"] == tag and intent["patterns"] != ""])
+            if len(patterns) == 0:
+                return f"Для тега '{tag}' отсутствуют шаблоны"
+            flat_patterns = sum(patterns, [])
+            return '\n'.join(map(str, flat_patterns))
+        else: return f"Тег '{tag}' отсутствует"
+    
+    def show_responses(self, tag):
+        intents = self.load_intents()
+        tag_check = any(intent["tag"] == tag for intent in intents)
+        if tag_check:
+            responses = ([intent["responses"] for intent in intents if intent["tag"] == tag and intent["responses"] != ""])
+            if len(responses) == 0:
+                return f"Для тега '{tag}' отсутствуют ответы"
+            flat_responses = sum(responses, [])
+            return '\n'.join(map(str, flat_responses))
+        else: return f"Тег '{tag}' отсутствует"
