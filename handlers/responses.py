@@ -12,6 +12,7 @@ async def response_message(message: Message):
     nn = NeuralNetwork("data.json")
     nn.read_data()
     nn.preprocess_data()
+    nn.build_model()
     LSTM_text = nn.get_answer(message.text)
     await message.reply(LSTM_text,
                         reply_markup=keyboard_dislike_like)
