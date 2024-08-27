@@ -67,8 +67,8 @@ class JSONFileManager:
         if not tag_response:
             [intent["responses"].append(response) if intent.get("tag") == tag else intent for intent in intents]
             self.save_intents(intents)
-            return f"Тег '{response}' добавлен"
-        else: return f"Тег '{response}' уже существует"
+            return f"'{response}' добавлен"
+        else: return f"'{response}' уже существует"
 
     def delete_response(self, tag, response):
         intents = self.load_intents()
@@ -76,8 +76,8 @@ class JSONFileManager:
         if tag_response:
             [intent['responses'].remove(response) for intent in intents if intent['tag'] == tag and response in intent['responses']]
             self.save_intents(intents)
-            return f"Тег '{response}' удален"
-        else: return f"Тег '{response}' отсутствует"
+            return f"'{response}' удален"
+        else: return f"'{response}' отсутствует"
     
     def display_intents(self):
         intents = self.load_intents()

@@ -57,7 +57,7 @@ class NeuralNetworkTraining:
         self.model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer=Adam(0.0001))
         his = self.model.fit(X_train, Y_train, batch_size=train_batch_size, epochs=train_epochs)
         self.model.export('trained_neural_network')
-        return his.history['accuracy']
+        return his
 
     def get_sequence_to_text(self,list_of_indices):
         reverse_word_map = dict(map(reversed, self.tokenizer.word_index.items()))
